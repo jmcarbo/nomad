@@ -1,4 +1,4 @@
-#!/usr/local/bin/dumb-init /bin/sh
+#!/bin/bash
 # Script created following Hashicorp's model for Consul: 
 # https://github.com/hashicorp/docker-consul/blob/master/0.X/docker-entrypoint.sh
 # Comments in this file originate from the project above, simply replacing 'Consul' with 'Nomad'.
