@@ -1,0 +1,53 @@
+version: '3.2'
+services:
+  nomad:
+    image: jmcarbo/nomad
+    command: agent -server -bootstrap-expect 3
+    volumes:
+      - $PWD/nomad-config:/etc/nomad
+    networks:
+      - consul-net
+    deploy:
+        replicas: 3
+        placement:
+            constraints: [node.role == manager]
+        resources:
+            reservations:
+                memory: 128M
+        restart_policy:
+            condition: on-failure
+            delay: 5s
+            max_attempts: 3
+            window: 120s
+        update_config:
+            parallelism: 1
+            delay: 10s
+            failure_action: continue
+
+  nomad-worker:
+    image: jmcarbo/nomad
+    command: agent -client 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/nomad-config:/etc/nomad
+    networks:
+      - consul-net
+    deploy:
+        replicas: 5
+        resources:
+            reservations:
+                memory: 128M
+        restart_policy:
+            condition: on-failure
+            delay: 5s
+            max_attempts: 3
+            window: 120s
+        update_config:
+            parallelism: 1
+            delay: 10s
+            failure_action: continue
+
+networks:
+  consul-net:
+    external: true
+
