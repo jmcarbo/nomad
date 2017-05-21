@@ -1,16 +1,18 @@
 version: '3.2'
 services:
-  nomad:
+  nomad-worker:
     image: jmcarbo/nomad
-    command: agent -server -bootstrap-expect 3
+    command: agent -client 
+    depends_on:
+      - nomad
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
       - $PWD/nomad-config:/etc/nomad
     networks:
       - consul-net
     deploy:
         replicas: 3
-        placement:
-            constraints: [node.role == manager]
         resources:
             reservations:
                 memory: 128M
